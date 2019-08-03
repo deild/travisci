@@ -27,7 +27,7 @@ jobs:
             export BODY="https://github.com/deild/travisci/compare/$LATEST...$TRAVIS_TAG";
           fi
         - tar -czf www.tar.xz index.html
-        - sha256sum www.tar.xz www.tar.xz.sha256
+        - sha256sum www.tar.xz > www.tar.xz.sha256
       deploy:
         provider: releases
         overwrite: true
