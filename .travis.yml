@@ -19,11 +19,14 @@ jobs:
           branch: master
     - stage: 'deploy release'
       install: echo "[$TRAVIS_BUILD_STAGE_NAME:install]"
-      script: skip
+      script: sed -i -e "s/SHA/$TRAVIS_COMMIT/g" index.html
       deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file: "index.html"
         skip_cleanup: true
-        provider: script
-        script: echo "[$TRAVIS_BUILD_STAGE_NAME:deploy]"
+        on:
+          tags: true
 before_install: echo "[before_install]"
 install: echo "[install]"
 before_script: echo "[before_script]"
