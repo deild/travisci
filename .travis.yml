@@ -1,20 +1,27 @@
 language: minimal
 stages:
-  - compile
   - test
-  - name: deploy
+  - name: 'deploy pages'
     if: branch = master
-env:
- - FOO=one
- - FOO=two
+  - name: 'deploy release'
+    if: tag IS present
 jobs:
   include:
-    - stage: compile
-      install: echo "[$TRAVIS_BUILD_STAGE_NAME:install]"
-      script: echo "[$TRAVIS_BUILD_STAGE_NAME:script]"
-    - stage: deploy
-      script: echo "[$TRAVIS_BUILD_STAGE_NAME:script]"
+    - stage: 'deploy pages'
+      script: sed -i -e "s/SHA/$TRAVIS_COMMIT/g" index.html
       deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_TOKEN
+        keep_history: true
+        committer_from_gh: true
+        on:
+          branch: master
+    - stage: 'deploy release'
+      install: echo "[$TRAVIS_BUILD_STAGE_NAME:install]"
+      script: skip
+      deploy:
+        skip_cleanup: true
         provider: script
         script: echo "[$TRAVIS_BUILD_STAGE_NAME:deploy]"
 before_install: echo "[before_install]"
