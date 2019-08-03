@@ -1,11 +1,23 @@
 language: minimal
+stages:
+  - compile
+  - test
+  - deploy
 env:
  - FOO=one
  - FOO=two
+jobs:
+  include:
+    - stage: compile
+      script: echo "[compile]"
+    - stage: deploy
+      script: echo "[deploy]"
 before_install: echo "[before_install]"
 install: echo "[install]"
 before_script: echo "[before_script]"
-script: echo "[$TRAVIS_BUILD_STAGE_NAME]"
+script:
+  - echo "[$TRAVIS_BUILD_STAGE_NAME]"
+  - make test
 after_success: echo "[after_success]"
 after_failure: echo "[after_failure]"
 before_deploy: echo "[before_deploy]"
