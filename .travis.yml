@@ -20,13 +20,12 @@ jobs:
     - stage: 'deploy release'
       before_deploy:
         - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
-        - export LATEST=$(git tag -l v[0-9].* | head -n1)
+        - export LATEST=$(git tag -l v[0-9].* | tail -n2 | head -n1)
         - if [[ -z $LATEST ]]; then
-            export BODY=$(git log --oneline --no-merges)
+            export BODY="https://github.com/deild/travisci/commits/$TRAVIS_TAG";
           else
-            export BODY=$(git log "$LATEST"..HEAD --oneline --no-merges)
+            export BODY="https://github.com/deild/travisci/compare/$LATEST...$TRAVIS_TAG";
           fi
-        - export BODY="# Changelog"
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz www.tar.xz.sha256
       deploy:
