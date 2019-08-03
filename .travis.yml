@@ -2,16 +2,21 @@ language: minimal
 stages:
   - compile
   - test
-  - deploy
+  - name: deploy
+    if: branch = master
 env:
  - FOO=one
  - FOO=two
 jobs:
   include:
     - stage: compile
-      script: echo "[compile]"
+      install: echo "[$TRAVIS_BUILD_STAGE_NAME:install]"
+      script: echo "[$TRAVIS_BUILD_STAGE_NAME:script]"
     - stage: deploy
-      script: echo "[deploy]"
+      script: echo "[$TRAVIS_BUILD_STAGE_NAME:script]"
+      deploy:
+        provider: script
+        script: echo "[$TRAVIS_BUILD_STAGE_NAME:deploy]"
 before_install: echo "[before_install]"
 install: echo "[install]"
 before_script: echo "[before_script]"
