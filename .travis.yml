@@ -1,5 +1,7 @@
 language: minimal
-
+env:
+ - FOO=one
+ - FOO=two
 before_install: echo "[before_install]"
 install: echo "[install]"
 before_script: echo "[before_script]"
