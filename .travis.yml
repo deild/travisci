@@ -8,7 +8,7 @@ stages:
 jobs:
   include:
     - stage: 'deploy pages'
-      script: sed -i -e "s/SHA/$TRAVIS_COMMIT/g" index.html
+      before_deploy: sed -i -e "s/SHA/$TRAVIS_COMMIT/g" index.html
       deploy:
         provider: pages
         skip_cleanup: true
@@ -20,11 +20,11 @@ jobs:
     - stage: 'deploy release'
       before_deploy:
         - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
-        - export LATEST=$(git tag -l v[0-9].* | tail -n2 | head -n1)
+        - export LATEST=$(git tag -l '*' | tail -n2 | head -n1)
         - if [[ -z $LATEST ]]; then
-            export BODY="https://github.com/deild/travisci/commits/$TRAVIS_TAG";
+            export BODY="See [changelog](https://github.com/deild/travisci/commits/$TRAVIS_TAG)";
           else
-            export BODY="https://github.com/deild/travisci/compare/$LATEST...$TRAVIS_TAG";
+            export BODY="See [changelog](https://github.com/deild/travisci/compare/$LATEST...$TRAVIS_TAG)";
           fi
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
