@@ -39,7 +39,8 @@ jobs:
           - "*.sha256"
         skip_cleanup: true
         body: $BODY
-        on:repo: deild/travisci
-        on:tags: true
+        on:
+          repo: deild/travisci
+          tags: true
 script:
   - make test
