@@ -18,13 +18,28 @@ jobs:
         on:
           branch: master
     - stage: 'deploy release'
-      script: sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
+      before_deploy:
+        - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
+        - export LATEST=$(git tag -l v[0-9].* | head -n1)
+        - if [[ -z $LATEST ]]; then
+            export BODY=$(git log --oneline --no-merges)
+          else
+            export BODY=$(git log "$LATEST"..HEAD --oneline --no-merges)
+          fi
+        - export BODY="# Changelog"
+        - tar -czf www.tar.xz index.html
+        - sha256sum www.tar.xz www.tar.xz.sha256
       deploy:
         provider: releases
+        overwrite: true
         api_key: $GITHUB_TOKEN
-        file: "index.html"
+        file_glob: true
+        file:
+          - "*.tar.xz"
+          - "*.sha256"
         skip_cleanup: true
-        on:
-          tags: true
+        body: $BODY
+        on:repo: deild/travisci
+        on:tags: true
 script:
   - make test
