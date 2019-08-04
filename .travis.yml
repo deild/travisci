@@ -29,18 +29,19 @@ jobs:
           else
             echo "See [Changelog](https://github.com/deild/travisci/compare/$(git tag -l '*' | tail -n2 | head -n1)...$TRAVIS_TAG)" >> BODY.md;
           fi
-        - export BODY="$(<BODY.md)"
-        - curl -fLo "$HOME/bin/ghr.tar.gz" --create-dirs https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
-        - tar -xvzf $HOME/bin/ghr.tar.gz -C $HOME/bin
-        - $HOME/bin/ghr_v0.12.2_linux_amd64/ghr -version
-        - mkdir -p upload
-        - tar -czf upload/www.tar.xz index.html
-        - sha256sum upload/www.tar.xz > upload/www.tar.xz.sha256
+        - curl -fLo "$HOME/bin/gothub.bz2" --create-dirs https://github.com/deild/gothub/releases/download/v0.8.0/linux-amd64-gothub.bz2
+        - bunzip2 $HOME/bin/gothub.bz2
+        - $HOME/bin/gothub --version
+        - tar -czf www.tar.xz index.html
+        - sha256sum www.tar.xz > www.tar.xz.sha256
       deploy:
         provider: scripts
         skip_cleanup: true
         overwrite: true
-        script: $HOME/bin/ghr_v0.12.2_linux_amd64/ghr -b "$BODY" -replace $TRAVIS_TAG upload/
+        script:
+          - $HOME/bin/gothub release -u deild -r travisci -t $TRAVIS_TAG -n $TRAVIS_TAG -d - < ODY.md
+          - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz" -f www.tar.xz -R
+          - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz.sha256" -f www.tar.xz.sha256 -R
         on:
           repo: deild/travisci
           tags: true
