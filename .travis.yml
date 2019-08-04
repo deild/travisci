@@ -20,7 +20,7 @@ jobs:
         on:
           branch: master
     - stage: 'deploy releases'
-      before_deploy:
+      before_script:
         - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
         - echo '# Release Notes' > BODY.md
         - echo "" >> BODY.md
@@ -35,14 +35,7 @@ jobs:
         - $HOME/bin/gothub --version
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
-      deploy:
-        provider: scripts
-        skip_cleanup: true
-        overwrite: true
-        script:
-          - $HOME/bin/gothub release -u deild -r travisci -t $TRAVIS_TAG -n $TRAVIS_TAG -d - < BODY.md
-          - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz" -f www.tar.xz -R
-          - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz.sha256" -f www.tar.xz.sha256 -R
-        on:
-          repo: deild/travisci
-          tags: true
+      script:
+        - $HOME/bin/gothub release -u deild -r travisci -t $TRAVIS_TAG -n $TRAVIS_TAG -d - < BODY.md
+        - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz" -f www.tar.xz -R
+        - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz.sha256" -f www.tar.xz.sha256 -R
