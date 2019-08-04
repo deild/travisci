@@ -7,4 +7,4 @@ help: ## displays the description of each target (Default)
 build: ## build the project
 	@printf '[INFO] FOO=%s \n' "${FOO}"
 
-test: build
+test: build ## test and build the project
