@@ -32,7 +32,7 @@ jobs:
         - export BODY="$(<BODY.md)"
         - curl -fLo "$HOME/bin/ghr.tar.gz" --create-dirs https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
         - tar -xvzf $HOME/bin/ghr.tar.gz -C $HOME/bin
-        - $HOME/bin/ghr version
+        - $HOME/bin/ghr_v0.12.2_linux_amd64/ghr -version
         - mkdir -p upload
         - tar -czf upload/www.tar.xz index.html
         - sha256sum upload/www.tar.xz > upload/www.tar.xz.sha256
@@ -40,7 +40,7 @@ jobs:
         provider: scripts
         skip_cleanup: true
         overwrite: true
-        script: $HOME/bin/ghr -b "$BODY" -replace $TRAVIS_TAG upload/
+        script: $HOME/bin/ghr_v0.12.2_linux_amd64/ghr -b "$BODY" -replace $TRAVIS_TAG upload/
         on:
           repo: deild/travisci
           tags: true
