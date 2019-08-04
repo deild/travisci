@@ -28,7 +28,7 @@ jobs:
           else
             echo "See [Changelog](https://github.com/deild/travisci/compare/$(git tag -l '*' | tail -n2 | head -n1)...$TRAVIS_TAG)" >> BODY.md;
           fi
-        - export BODY=$(<BODY.md)
+        - export BODY="$(<BODY.md)"
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
       deploy:
