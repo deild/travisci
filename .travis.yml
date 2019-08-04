@@ -31,6 +31,7 @@ jobs:
           fi
         - curl -fLo "$HOME/bin/gothub.bz2" --create-dirs https://github.com/deild/gothub/releases/download/v0.8.0/linux-amd64-gothub.bz2
         - bunzip2 $HOME/bin/gothub.bz2
+        - chmod +x $HOME/bin/gothub
         - $HOME/bin/gothub --version
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
@@ -39,7 +40,7 @@ jobs:
         skip_cleanup: true
         overwrite: true
         script:
-          - $HOME/bin/gothub release -u deild -r travisci -t $TRAVIS_TAG -n $TRAVIS_TAG -d - < ODY.md
+          - $HOME/bin/gothub release -u deild -r travisci -t $TRAVIS_TAG -n $TRAVIS_TAG -d - < BODY.md
           - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz" -f www.tar.xz -R
           - $HOME/bin/gothub upload -u deild -r travisci -t $TRAVIS_TAG -n "www.tar.xz.sha256" -f www.tar.xz.sha256 -R
         on:
