@@ -5,6 +5,8 @@ stages:
     if: branch = master
   - name: 'deploy release'
     if: tag IS present
+script:
+  - make test
 jobs:
   include:
     - stage: 'deploy pages'
@@ -20,11 +22,10 @@ jobs:
     - stage: 'deploy release'
       before_deploy:
         - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
-        - export LATEST=$(git tag -l '*' | tail -n2 | head -n1)
-        - if [[ -z $LATEST ]]; then
+        - if [[ $(git tag -l '*' | wc -l) == "1" ]]; then
             export BODY="See [changelog](https://github.com/deild/travisci/commits/$TRAVIS_TAG)";
           else
-            export BODY="See [changelog](https://github.com/deild/travisci/compare/$LATEST...$TRAVIS_TAG)";
+            export BODY="See [changelog](https://github.com/deild/travisci/compare/$(git tag -l '*' | tail -n2 | head -n1)...$TRAVIS_TAG)";
           fi
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
@@ -41,5 +42,3 @@ jobs:
         on:
           repo: deild/travisci
           tags: true
-script:
-  - make test
