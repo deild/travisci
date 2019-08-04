@@ -3,7 +3,7 @@ stages:
   - test
   - name: 'deploy pages'
     if: branch = master
-  - name: 'deploy release'
+  - name: 'deploy releases'
     if: tag IS present
 script:
   - make test
@@ -19,14 +19,16 @@ jobs:
         committer_from_gh: true
         on:
           branch: master
-    - stage: 'deploy release'
+    - stage: 'deploy releases'
       before_deploy:
         - sed -i -e "s/SHA/$TRAVIS_TAG/g" index.html
+        - printf '# Release Notes\n\n' > BODY.md
         - if [[ $(git tag -l '*' | wc -l) == "1" ]]; then
-            export BODY="See [changelog](https://github.com/deild/travisci/commits/$TRAVIS_TAG)";
+            echo "See [Changelog](https://github.com/deild/travisci/commits/$TRAVIS_TAG)" >> BODY.md;
           else
-            export BODY="See [changelog](https://github.com/deild/travisci/compare/$(git tag -l '*' | tail -n2 | head -n1)...$TRAVIS_TAG)";
+            echo "See [Changelog](https://github.com/deild/travisci/compare/$(git tag -l '*' | tail -n2 | head -n1)...$TRAVIS_TAG)" >> BODY.md;
           fi
+        - export BODY=$(<BODY.md)
         - tar -czf www.tar.xz index.html
         - sha256sum www.tar.xz > www.tar.xz.sha256
       deploy:
